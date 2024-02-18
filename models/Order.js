@@ -5,6 +5,10 @@ const OrderSchema = new Schema({
         type: String,
         required: true,
     },
+    oid:{
+        type: String,
+        required: true,
+    },
     image: {
         type: [String], // Change the type to an array of strings
         required: true,
@@ -18,8 +22,8 @@ const OrderSchema = new Schema({
         required: true
     },
     status: {
-        type: [String], // Change the type to an array of strings
-        default: null
+        type: Boolean, // Change the type to an array of strings
+        default: false
     },
     date: {
         type: Date,
