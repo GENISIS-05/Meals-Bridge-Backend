@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 const { Schema } = mongoose;
-const OrderSchema = new Schema({
+const Active_OrderSchema = new Schema({
     uid: {
         type: String,
         required: true,
@@ -13,18 +13,10 @@ const OrderSchema = new Schema({
         type: String,
         default: null
     },
-    image: {
-        type: [String], // Change the type to an array of strings
-        required: true,
-    },
-    foodname: {
-        type: [String], // Change the type to an array of strings
-        required: true
-    },
-    quantity: {
-        type: [String], // Change the type to an array of strings
-        required: true
-    },
+    // location:{
+    //     type: String,
+    //     required: true
+    // },
     status: {
         type: Boolean, // Change the type to an array of strings
         default: false
@@ -38,4 +30,4 @@ const OrderSchema = new Schema({
         default: new Date().toLocaleTimeString() // it will return current time
     }
 });
-module.exports = mongoose.model('Order', OrderSchema); // Export the model
+module.exports = mongoose.model('Order', Active_OrderSchema); // Export the model
