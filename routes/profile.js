@@ -29,15 +29,16 @@ router.post('/addProfile', [
     body('location', 'Enter a valid Location').isArray(),
     body('type', 'Enter a valid type').isLength({ min: 1 }),
     body('role', 'Enter a valid role').isLength({ min: 1 }),
+    body('phone', 'Enter a valid phone number').isLength({ min: 10 }),
 ], async (req, res) => {
     try {
         // check if the user already exists
-        const existingUser = await Profile.findOne({ id: req.body.id });
+        const existingUser = await Profile.findOne({ uid: req.body.uid });
         if (existingUser) {
             return res.status(400).json({ error: "Sorry, a user with this id already exists" });
         }
 
-        const { uid, name, email, location, type, role } = req.body;
+        const { uid, name, email, location, type, role,phone } = req.body;
 
         // Validate request body
         const errors = validationResult(req);
@@ -52,7 +53,8 @@ router.post('/addProfile', [
             email,
             location,
             type,
-            role
+            role,
+            phone
         });
 
         const savedProfile = await profile.save();
