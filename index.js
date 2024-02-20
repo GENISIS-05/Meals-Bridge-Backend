@@ -21,6 +21,7 @@ app.use('/api/auth', require('./routes/auth'))
 app.use('/api/roles', require('./routes/role'))
 app.use('/api/profile', require('./routes/profile'))
 app.use('/api/order', require('./routes/userorder'))
+app.use('/api/otp', require('./routes/otp'))
 
 
 app.listen(port, () => {
