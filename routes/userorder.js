@@ -5,10 +5,10 @@ const UserOrder = require('../models/Order');
 const Profile = require('../models/Profile');
 var fetchuser = require('../middleware/fetchuser');
 const { v4: uuidv4 } = require('uuid');
-
 //Route 1: fetch  UserOrder by giving oid using: get "http://localhost:3000/api/order/singleOrder/:id". login required
 router.get('/singleOrder/:id', async (req, res) => {
     try {
+        
         const userorder = await UserOrder.find({ oid: req.params.id });
         if (!userorder) {
             return res.status(404).send("Not Found");
