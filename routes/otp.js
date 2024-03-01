@@ -4,7 +4,7 @@ const { body, validationResult } = require("express-validator");
 const Otp = require("../models/Otp");
 const textflow = require("textflow.js");
 textflow.useKey(
-  "MKKoaARcA4lj5YJeuoFNg7dqFT2M0RWrdqqR5DCzBRUpEB9da6Us16CpIotYnT70"
+  "rUU6Zoo16hrHzeTULRKxseRsVZviGaNwTAbCPJUVRXPNN2gChrP2hK11R5itgq7o"
 );
 const { v4: uuidv4 } = require("uuid");
 const Profile = require("../models/Profile");
@@ -48,10 +48,12 @@ router.post(
         {
           const otpSave = await Otp.findOneAndDelete({ phone: phone });
           res.json({ message: "otp verified", profile });
+          console.log("otp verified");
         }
         else{
           const otpSave = await Otp.findOneAndDelete({ phone: phone });
           res.json({ message: "otp verified", uid: oid});
+          console.log("otp verified");
         }
         
       }

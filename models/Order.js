@@ -29,7 +29,19 @@ const OrderSchema = new Schema({
         type: String,
         required: true
     },
+    Assignuid:{
+        type:[String],
+        required: true
+    },
+    total:{
+        type: Number,
+        required: true
+    },
     status: {
+        type: Boolean, // Change the type to an array of strings
+        default: false
+    },
+    isCompleted: {
         type: Boolean, // Change the type to an array of strings
         default: false
     },

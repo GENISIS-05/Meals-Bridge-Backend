@@ -67,25 +67,33 @@ router.post('/addProfile', [
     }
 });
 
+//route 3: send only location name and type of profile using: get "http://localhost:3000/api/profile/fetchloc". login required
+
+router.get('/fetchloc', async (req, res) => {
+    try {
+        const profiles = await Profile.find({ role: 'distributor' }, { location: 1, uid:1,name:1, _id: 0 });
+        
+        if (profiles.length === 0) {
+            return res.status(404).send("Not Found  any order");
+        }
+        
+        res.json(profiles);
+    } catch (error) {
+        console.error(error.message);
+        res.status(500).send("Internal Server Error");
+    }
+});
 
 
-// Route 3: update an existing Profile using: put "http://localhost:3000/api/profile/updateProfile/:id". login required
-// router.put('/updateProfile/:id', fetchuser,[
-//     body('first_name', 'Enter a valid First name').isLength({ min: 1 }),
-//     body('last_name', 'Enter a valid Last name').isLength({ min: 1 }),
-//     body('branch', 'Enter a valid Branch').isLength({ min: 1 }),
-//     body('city', 'Enter a valid City').isLength({ min: 1 }),
-//     body('state', 'Enter a valid State').isLength({ min: 1 }),
-//     body('zip', 'Enter a valid Zip').isLength({ min: 1 }),
-// ], async (req, res) => {
+
+//Route 3: update an existing Profile using: put "http://localhost:3000/api/profile/updateProfile/:id". login required
+// router.put('/updateProfile/:id', async (req, res) => {
 //    try {
 //     // Log the user's Profile for debugging
-//     console.log(req.user.role);
+    
 //     // Check if the user has both "admin" or "superadmin" Profiles
-//     if (req.user.role !== "admin" && req.user.role !== "superadmin") {
-//         return res.status(401).json({ status: "error", message: "Not Allowed" });
-//     }
-//     const { first_name,last_name,branch,city,state,zip } = req.body;
+    
+    
 //     const errors = await validationResult(req);
 //     if (!errors.isEmpty()) {
 //         return res.status(400).json({ errors: errors.array() });
