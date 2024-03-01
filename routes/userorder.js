@@ -36,18 +36,25 @@ router.get('/allOrder/:id', async (req, res) => {
 
 //Route 3: fetch all  order from order collection and status using: get "http://localhost:3000/api/order/Orderloc". login required
 // send location and oid and uid
-router.get('/Orderloc', async (req, res) => {
+router.get('/Orderloc/:id', async (req, res) => {
     try {
-        const userorder = await UserOrder.find({ status: false }).sort({ createdAt: -1 }).limit(10).exec();
-        if (!userorder) {
-            return res.status(404).send("Not Found");
+        const id = req.params.id; // Get the ID from the request parameters
+        const userorder = await UserOrder.find({ status: false, Assignuid: { $in: [id] } })
+                                        .sort({ createdAt: -1 })
+                                        .limit(10)
+                                        .exec();
+        
+        if (userorder.length === 0) {
+            return res.json(userorder);
         }
+        
         res.json(userorder);
     } catch (error) {
         console.error(error.message);
         res.status(500).send("Internal Server Error");
     }
 })
+
 
 //Route 4: updated status of order using: put "http://localhost:3000/api/order/updateOrder/:id". login required
 
@@ -90,23 +97,29 @@ router.post('/addUserOrder',[
     body('foodname', 'Enter a valid foodname').isArray({ min: 1 }),
     body('quantity', 'Enter a valid quantity').isArray({ min: 1 }),
     body('location', 'Enter a valid location').isLength({ min: 1 }),
-    // body('status', 'Enter a valid status').isArray({ min: 0 }),
+    body('Assignuid', 'Enter a valid receiver uid').isArray({ min: 1 }),
 ] ,async (req, res) => {
     try {
         // check if the user already exists
         const existingUser = await Profile.findOne({ uid: req.body.uid });
         console.log(req.body.uid)
         if (!existingUser) {
-            return res.status(400).json({ error: "Sorry, a user with this id does not exists" });
+            return res.status(400).json({ error: "Sorry, a user with this id does not exist" });
         }
-        const { uid, image, foodname, quantity,location, status } = req.body;
+        
+        const { uid, image, foodname, quantity, location, status, Assignuid } = req.body;
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
             return res.status(400).json({ errors: errors.array() });
         }
-        const shortUuid= `GN${uuidv4()}`;
+
+        // Calculate total quantity
+        // Assuming quantity is an array of strings representing numbers
+const total = quantity.reduce((acc, curr) => acc + parseFloat(curr), 0);
+
+        const shortUuid = `GN${uuidv4()}`;
         const oid = shortUuid.substr(0, 6);
-        const userorder = new UserOrder({ uid,oid, image, foodname, quantity,location, status });
+        const userorder = new UserOrder({ uid, oid, image, foodname, quantity, location, status, Assignuid, total });
         const savedUserOrder = await userorder.save();
         res.json(savedUserOrder);
     } catch (error) {
@@ -115,5 +128,48 @@ router.post('/addUserOrder',[
     }
 })
 
+//Route 6: fetch all  order from order collection of a specific ngo using: get "http://localhost:3000/api/order/archieve". login required
+// send location and oid and uid
+router.get('/archieve/:id', async (req, res) => {
+    try {
+        const id = req.params.id; // Get the ID from the request parameters
+        const userorder = await UserOrder.find({ status: true, reciveruid: id })
+                                        .sort({ createdAt: -1 })
+                                        .limit(10)
+                                        .exec();
+        
+        if (userorder.length === 0) {
+            return res.json(userorder);
+        }
+        
+        res.json(userorder);
+    } catch (error) {
+        console.error(error.message);
+        res.status(500).send("Internal Server Error");
+    }
+})
+
+//Route 7: updated isCompleted of order using: put "http://localhost:3000/api/order/isCompleted/:id". login required
+
+router.put('/isCompleted/:id', async (req, res) => {
+    try {
+
+        
+
+        const userorder = await UserOrder.findOne({ oid: req.params.id });
+        if (!userorder) {
+            return res.status(404).send("Not Found");
+        }
+        if (userorder.isCompleted) {
+            return res.status(400).send("Order already completed.");
+        }
+        userorder.isCompleted = true;
+        const savedUserOrder = await userorder.save();
+        res.json(savedUserOrder);
+    } catch (error) {
+        console.error(error.message);
+        res.status(500).send("Internal Server Error");
+    }
+})
 
 module.exports = router;
